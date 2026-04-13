@@ -1,50 +1,104 @@
 <!doctype html>
-<html lang="ko">
+  <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Website</title>
-  <meta name="description" content="GitHub Pages로 배포하는 개인 웹사이트">
+  <title>1MINSPRINT | Forced 1-Minute Workout App</title>
+  <meta name="description" content="A focus-time app that takes over your screen and forces a 1-minute workout. AI tracks your physical and mental wellness.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="top-stripes" aria-hidden="true"></div>
+
   <header class="hero">
     <nav class="nav">
-      <div class="brand">MY SITE</div>
-      <a class="nav-link" href="#about">소개</a>
-      <a class="nav-link" href="#projects">프로젝트</a>
-      <a class="nav-link" href="#contact">연락</a>
+      <div class="menu-icon" aria-hidden="true">☰</div>
+      <div class="logo">1MINSPRINT</div>
+      <div class="nav-actions">
+        <a href="#product">PRODUCT</a>
+        <a href="#ai">AI</a>
+        <a href="#newsletter">NEWSLETTER</a>
+      </div>
     </nav>
-    <div class="hero-content">
-      <h1>안녕하세요, 제 웹사이트에 오신 걸 환영합니다.</h1>
-      <p>이 사이트는 GitHub Pages로 배포됩니다.</p>
-      <button id="cta-btn" type="button">인사하기</button>
-    </div>
+
+    <p class="eyebrow">"WEBSITE"</p>
+    <h1>OFF-WHITE c/o BUSY PEOPLE</h1>
+    <p class="subtitle">For people who cannot leave the screen,<br>the timer enforces a 1-minute movement break.</p>
+    <p class="quote">"Natural Woman"</p>
   </header>
 
-  <main class="container">
-    <section id="about" class="card">
-      <h2>소개</h2>
-      <p>여기에 본인 소개를 자유롭게 작성하세요.</p>
+  <main>
+    <section id="newsletter" class="newsletter-wrap">
+      <div class="newsletter-card">
+        <div class="card-head">
+          <h2>"NEWSLETTER"</h2>
+          <button id="close-newsletter" type="button" aria-label="Close">✕</button>
+        </div>
+
+        <form id="newsletter-form" novalidate>
+          <label for="email">Email address*</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+
+          <label for="country">Select a country*</label>
+          <select id="country" name="country" required>
+            <option value="">Select one</option>
+            <option value="KR">Korea</option>
+            <option value="US">United States</option>
+            <option value="JP">Japan</option>
+            <option value="DE">Germany</option>
+            <option value="OTHER">Other</option>
+          </select>
+
+          <div class="gender-row">
+            <label><input type="radio" name="gender" value="Male" required> Male</label>
+            <label><input type="radio" name="gender" value="Female" required> Female</label>
+          </div>
+
+          <label class="consent">
+            <input id="consent" name="consent" type="checkbox" required>
+            <span>I have read the privacy information notice and I accept to receive the newsletter.</span>
+          </label>
+
+          <button class="subscribe-btn" type="submit">SUBSCRIBE</button>
+          <p id="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
     </section>
 
-    <section id="projects" class="card">
-      <h2>프로젝트</h2>
+    <section id="product" class="content">
+      <h3>Recently Uploaded Forced Habit Routine</h3>
+      <p>1MINSPRINT keeps your workflow alive while forcing a 60-second movement routine.</p>
       <ul>
-        <li>프로젝트 1</li>
-        <li>프로젝트 2</li>
-        <li>프로젝트 3</li>
+        <li>Timer-based screen takeover with workout countdown</li>
+        <li>AI health and mood tracking with daily reminders</li>
+        <li>Habit exposure system built for busy professionals</li>
       </ul>
     </section>
 
-    <section id="contact" class="card">
-      <h2>연락처</h2>
-      <p>email@example.com</p>
+    <section id="ai" class="content">
+      <h3>AI INSIGHT</h3>
+      <p>
+        Based on sedentary streaks, completion rate, and mood check-ins,
+        the app recommends the exact 1-minute workout you need right now.
+      </p>
+      <button id="simulate-overlay" class="outline-btn" type="button">Try 1-Min Screen Takeover</button>
     </section>
   </main>
 
+  <div id="workout-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="overlay-card">
+      <h4>MOVE NOW · 60s</h4>
+      <p>Screen locked: shoulders 20s + squats 20s + breathing 20s</p>
+      <div id="countdown">60</div>
+      <button id="stop-overlay" type="button">End Session</button>
+    </div>
+  </div>
+
   <footer class="footer">
-    <small>© <span id="year"></span> My Website</small>
+    <small>© <span id="year"></span> 1MINSPRINT</small>
   </footer>
 
   <script src="script.js"></script>
