@@ -63,6 +63,17 @@ body {
   letter-spacing: 0.08em;
 }
 
+#dark-toggle {
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
 .eyebrow {
   font-size: 42px;
   margin: 10px 0;
@@ -248,6 +259,32 @@ h1 {
   margin: 12px 0;
 }
 
+#phase-label {
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: var(--orange);
+  margin: 0;
+}
+
+.phase-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #444;
+}
+
+.dot.active {
+  background: var(--orange);
+}
+
 #stop-overlay {
   border: 0;
   background: var(--orange);
@@ -261,6 +298,46 @@ h1 {
   text-align: center;
   padding: 28px 0 20px;
   color: var(--muted);
+}
+
+.reopen-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--orange);
+  color: var(--black);
+  border: none;
+  padding: 12px 20px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 100;
+}
+
+body.dark {
+  --off-bg: #1a1a1a;
+  --off-text: #e0e0e0;
+  --muted: #999999;
+}
+
+body.dark .top-stripes {
+  background: repeating-linear-gradient(
+    -65deg,
+    #e0e0e0 0 34px,
+    #333 34px 68px
+  );
+}
+
+body.dark .newsletter-card {
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.5);
+}
+
+body.dark .nav-actions a {
+  color: var(--off-text);
+}
+
+body.dark .outline-btn {
+  border-color: var(--off-text);
+  color: var(--off-text);
 }
 
 @media (max-width: 768px) {

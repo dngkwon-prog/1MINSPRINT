@@ -1,8 +1,13 @@
+const CONFIG = {
+  FORMSPREE_ENDPOINT: "https://formspree.io/f/xnnvvdgy"
+};
+
 const yearEl = document.getElementById("year");
 const newsletterForm = document.getElementById("newsletter-form");
 const formStatus = document.getElementById("form-status");
 const closeNewsletterBtn = document.getElementById("close-newsletter");
 const newsletterWrap = document.querySelector(".newsletter-wrap");
+const reopenBtn = document.getElementById("reopen-newsletter");
 const simulateOverlayBtn = document.getElementById("simulate-overlay");
 const stopOverlayBtn = document.getElementById("stop-overlay");
 const overlay = document.getElementById("workout-overlay");
@@ -40,7 +45,7 @@ function saveLeadLocally(payload) {
 
 async function submitToFormspree(data) {
   // Replace the endpoint with your own Formspree form URL.
-  const endpoint = "https://formspree.io/f/xnnvvdgy";
+  const endpoint = CONFIG.FORMSPREE_ENDPOINT;
 
   try {
     const response = await fetch(endpoint, {
@@ -103,9 +108,15 @@ if (newsletterForm) {
   });
 }
 
-if (closeNewsletterBtn && newsletterWrap) {
+if (closeNewsletterBtn && newsletterWrap && reopenBtn) {
   closeNewsletterBtn.addEventListener("click", () => {
     newsletterWrap.style.display = "none";
+    reopenBtn.style.display = "block";
+  });
+
+  reopenBtn.addEventListener("click", () => {
+    newsletterWrap.style.display = "";
+    reopenBtn.style.display = "none";
   });
 }
 
@@ -121,15 +132,48 @@ function endOverlay() {
   }
 }
 
-function startOverlay(duration = 60) {
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && overlay && !overlay.classList.contains("hidden")) {
+    endOverlay();
+  }
+});
+
+function startOverlay() {
   if (!overlay || !countdownEl) {
     return;
   }
 
-  let remaining = duration;
+  const phases = [
+    { name: "SHOULDERS", duration: 20 },
+    { name: "SQUATS", duration: 20 },
+    { name: "BREATHING", duration: 20 }
+  ];
+  const phaseLabel = document.getElementById("phase-label");
+  const dots = [
+    document.getElementById("dot-1"),
+    document.getElementById("dot-2"),
+    document.getElementById("dot-3")
+  ];
+  let phaseIndex = 0;
+  let remaining = phases[0].duration;
+
   overlay.classList.remove("hidden");
   overlay.setAttribute("aria-hidden", "false");
   countdownEl.textContent = String(remaining);
+
+  function updatePhaseUI() {
+    if (phaseLabel) {
+      phaseLabel.textContent = phases[phaseIndex].name;
+    }
+
+    dots.forEach((dot, index) => {
+      if (dot) {
+        dot.classList.toggle("active", index === phaseIndex);
+      }
+    });
+  }
+
+  updatePhaseUI();
 
   if (intervalId) {
     clearInterval(intervalId);
@@ -140,15 +184,37 @@ function startOverlay(duration = 60) {
     countdownEl.textContent = String(remaining);
 
     if (remaining <= 0) {
-      endOverlay();
+      phaseIndex += 1;
+
+      if (phaseIndex >= phases.length) {
+        endOverlay();
+        return;
+      }
+
+      remaining = phases[phaseIndex].duration;
+      countdownEl.textContent = String(remaining);
+      updatePhaseUI();
     }
   }, 1000);
 }
 
 if (simulateOverlayBtn) {
-  simulateOverlayBtn.addEventListener("click", () => startOverlay(60));
+  simulateOverlayBtn.addEventListener("click", startOverlay);
 }
 
 if (stopOverlayBtn) {
   stopOverlayBtn.addEventListener("click", endOverlay);
+}
+
+const darkToggle = document.getElementById("dark-toggle");
+if (darkToggle) {
+  const saved = localStorage.getItem("1ms-dark");
+  if (saved === "true") {
+    document.body.classList.add("dark");
+  }
+
+  darkToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("1ms-dark", String(document.body.classList.contains("dark")));
+  });
 }

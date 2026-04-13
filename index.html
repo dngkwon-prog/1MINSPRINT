@@ -21,6 +21,7 @@
         <a href="#product">PRODUCT</a>
         <a href="#ai">AI</a>
         <a href="#newsletter">NEWSLETTER</a>
+        <button id="dark-toggle" type="button" aria-label="Toggle dark mode">DARK</button>
       </div>
     </nav>
 
@@ -90,9 +91,14 @@
 
   <div id="workout-overlay" class="overlay hidden" aria-hidden="true">
     <div class="overlay-card">
-      <h4>MOVE NOW · 60s</h4>
-      <p>Screen locked: shoulders 20s + squats 20s + breathing 20s</p>
-      <div id="countdown">60</div>
+      <h4>MOVE NOW</h4>
+      <p id="phase-label">SHOULDERS</p>
+      <div id="countdown">20</div>
+      <div class="phase-dots">
+        <span id="dot-1" class="dot active"></span>
+        <span id="dot-2" class="dot"></span>
+        <span id="dot-3" class="dot"></span>
+      </div>
       <button id="stop-overlay" type="button">End Session</button>
     </div>
   </div>
@@ -102,5 +108,6 @@
   </footer>
 
   <script src="script.js"></script>
+  <button id="reopen-newsletter" class="reopen-btn" type="button" style="display:none;">NEWSLETTER</button>
 </body>
 </html>
