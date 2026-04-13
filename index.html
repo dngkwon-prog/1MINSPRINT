@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Website</title>
+  <meta name="description" content="GitHub Pages로 배포하는 개인 웹사이트">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav">
+      <div class="brand">MY SITE</div>
+      <a class="nav-link" href="#about">소개</a>
+      <a class="nav-link" href="#projects">프로젝트</a>
+      <a class="nav-link" href="#contact">연락</a>
+    </nav>
+    <div class="hero-content">
+      <h1>안녕하세요, 제 웹사이트에 오신 걸 환영합니다.</h1>
+      <p>이 사이트는 GitHub Pages로 배포됩니다.</p>
+      <button id="cta-btn" type="button">인사하기</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="about" class="card">
+      <h2>소개</h2>
+      <p>여기에 본인 소개를 자유롭게 작성하세요.</p>
+    </section>
+
+    <section id="projects" class="card">
+      <h2>프로젝트</h2>
+      <ul>
+        <li>프로젝트 1</li>
+        <li>프로젝트 2</li>
+        <li>프로젝트 3</li>
+      </ul>
+    </section>
+
+    <section id="contact" class="card">
+      <h2>연락처</h2>
+      <p>email@example.com</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© <span id="year"></span> My Website</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
