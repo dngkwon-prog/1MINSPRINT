@@ -87,6 +87,46 @@
       </p>
       <button id="simulate-overlay" class="outline-btn" type="button">Try 1-Min Screen Takeover</button>
     </section>
+
+    <section id="account" class="content auth-section">
+      <h3>ACCOUNT</h3>
+      <p>Create an account, sign in, and manage member tiers.</p>
+      <div class="auth-grid">
+        <form id="register-form" class="auth-card" novalidate>
+          <h4>Create Account</h4>
+          <label for="reg-name">Display name</label>
+          <input id="reg-name" name="displayName" type="text" required>
+          <label for="reg-email">Email</label>
+          <input id="reg-email" name="email" type="email" required>
+          <label for="reg-password">Password (8+ chars)</label>
+          <input id="reg-password" name="password" type="password" minlength="8" required>
+          <button type="submit">REGISTER</button>
+        </form>
+
+        <form id="login-form" class="auth-card" novalidate>
+          <h4>Sign In</h4>
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" required>
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" required>
+          <button type="submit">LOGIN</button>
+        </form>
+
+        <div class="auth-card">
+          <h4>Session</h4>
+          <p id="user-status">Not signed in.</p>
+          <label for="tier-select">Tier</label>
+          <select id="tier-select">
+            <option value="starter">starter</option>
+            <option value="pro">pro</option>
+            <option value="elite">elite</option>
+          </select>
+          <button id="update-tier" type="button">UPDATE TIER (ADMIN)</button>
+          <button id="logout-btn" type="button">LOGOUT</button>
+        </div>
+      </div>
+      <p id="auth-status" class="auth-status" role="status" aria-live="polite"></p>
+    </section>
   </main>
 
   <div id="workout-overlay" class="overlay hidden" aria-hidden="true">

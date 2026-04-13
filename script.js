@@ -1,4 +1,5 @@
 const CONFIG = {
+  API_BASE_URL: window.location.origin,
   FORMSPREE_ENDPOINT: "https://formspree.io/f/xnnvvdgy"
 };
 
@@ -12,8 +13,37 @@ const simulateOverlayBtn = document.getElementById("simulate-overlay");
 const stopOverlayBtn = document.getElementById("stop-overlay");
 const overlay = document.getElementById("workout-overlay");
 const countdownEl = document.getElementById("countdown");
+const registerForm = document.getElementById("register-form");
+const loginForm = document.getElementById("login-form");
+const logoutBtn = document.getElementById("logout-btn");
+const authStatus = document.getElementById("auth-status");
+const userStatus = document.getElementById("user-status");
+const tierSelect = document.getElementById("tier-select");
+const updateTierBtn = document.getElementById("update-tier");
 
 let intervalId = null;
+let currentUser = null;
+let authToken = localStorage.getItem("1ms-token") || "";
+
+function apiUrl(path) {
+  return `${CONFIG.API_BASE_URL}${path}`;
+}
+
+async function request(path, options = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+  if (authToken) {
+    headers.Authorization = `Bearer ${authToken}`;
+  }
+  const response = await fetch(apiUrl(path), { ...options, headers });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || "Request failed.");
+  }
+  return data;
+}
 
 if (yearEl) {
   yearEl.textContent = String(new Date().getFullYear());
@@ -26,6 +56,24 @@ function setStatus(message, isError = false) {
 
   formStatus.textContent = message;
   formStatus.style.color = isError ? "#540f00" : "#082d16";
+}
+
+function setAuthStatus(message, isError = false) {
+  if (!authStatus) return;
+  authStatus.textContent = message;
+  authStatus.style.color = isError ? "#7b0a0a" : "#103620";
+}
+
+function renderSession() {
+  if (!userStatus) return;
+  if (!currentUser) {
+    userStatus.textContent = "Not signed in.";
+    return;
+  }
+  userStatus.textContent = `${currentUser.displayName} (${currentUser.email}) · tier: ${currentUser.tier} · role: ${currentUser.role}`;
+  if (tierSelect) {
+    tierSelect.value = currentUser.tier;
+  }
 }
 
 function saveLeadLocally(payload) {
@@ -98,12 +146,25 @@ if (newsletterForm) {
     }
 
     setStatus("Submitting...");
-    const apiResult = await submitToFormspree(payload);
-    if (apiResult.ok) {
+    try {
+      await request("/api/newsletter/subscribe", {
+        method: "POST",
+        body: JSON.stringify({
+          ...payload,
+          source: "1MINSPRINT landing page",
+          userId: currentUser?.id || null
+        })
+      });
       setStatus("Subscribed. We will send updates soon.");
       newsletterForm.reset();
-    } else {
-      setStatus("Saved locally, but remote delivery failed. Check endpoint.", true);
+    } catch (error) {
+      const fallback = await submitToFormspree(payload);
+      if (fallback.ok) {
+        setStatus("Subscribed via fallback channel.");
+        newsletterForm.reset();
+      } else {
+        setStatus(error.message || "Subscription failed.", true);
+      }
     }
   });
 }
@@ -206,6 +267,107 @@ if (stopOverlayBtn) {
   stopOverlayBtn.addEventListener("click", endOverlay);
 }
 
+if (registerForm) {
+  registerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(registerForm);
+    const payload = {
+      displayName: String(formData.get("displayName") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      password: String(formData.get("password") || "")
+    };
+    if (!payload.displayName || !payload.email || payload.password.length < 8) {
+      setAuthStatus("Check register fields. Password must be 8+ chars.", true);
+      return;
+    }
+
+    try {
+      const data = await request("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      authToken = data.token;
+      currentUser = data.user;
+      localStorage.setItem("1ms-token", authToken);
+      renderSession();
+      setAuthStatus("Registered and signed in.");
+      registerForm.reset();
+    } catch (error) {
+      setAuthStatus(error.message, true);
+    }
+  });
+}
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(loginForm);
+    try {
+      const data = await request("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: String(formData.get("email") || "").trim(),
+          password: String(formData.get("password") || "")
+        })
+      });
+      authToken = data.token;
+      currentUser = data.user;
+      localStorage.setItem("1ms-token", authToken);
+      renderSession();
+      setAuthStatus("Signed in.");
+      loginForm.reset();
+    } catch (error) {
+      setAuthStatus(error.message, true);
+    }
+  });
+}
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    authToken = "";
+    currentUser = null;
+    localStorage.removeItem("1ms-token");
+    renderSession();
+    setAuthStatus("Logged out.");
+  });
+}
+
+if (updateTierBtn) {
+  updateTierBtn.addEventListener("click", async () => {
+    if (!currentUser) {
+      setAuthStatus("Sign in first.", true);
+      return;
+    }
+    try {
+      const data = await request(`/api/users/${currentUser.id}/tier`, {
+        method: "PATCH",
+        body: JSON.stringify({ tier: tierSelect?.value || "starter" })
+      });
+      currentUser = data.user;
+      renderSession();
+      setAuthStatus("Tier updated.");
+    } catch (error) {
+      setAuthStatus(error.message, true);
+    }
+  });
+}
+
+async function restoreSession() {
+  if (!authToken) {
+    renderSession();
+    return;
+  }
+  try {
+    const data = await request("/api/me", { method: "GET" });
+    currentUser = data.user;
+    renderSession();
+  } catch {
+    authToken = "";
+    localStorage.removeItem("1ms-token");
+    renderSession();
+  }
+}
+
 const darkToggle = document.getElementById("dark-toggle");
 if (darkToggle) {
   const saved = localStorage.getItem("1ms-dark");
@@ -218,3 +380,5 @@ if (darkToggle) {
     localStorage.setItem("1ms-dark", String(document.body.classList.contains("dark")));
   });
 }
+
+restoreSession();
